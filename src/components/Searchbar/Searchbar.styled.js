@@ -9,7 +9,7 @@ const SearchbarStyled = styled.header(() => {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        minHeight: '64px',
+        minHeight: '34px',
         paddingRight: '24px',
         paddingLeft: '24px',
         paddingTop: '12px',

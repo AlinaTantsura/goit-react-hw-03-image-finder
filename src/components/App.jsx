@@ -8,7 +8,9 @@ class App extends Component{
     }
     render() {
         return (
-            <Searchbar onSubmit={this.onSubmit}/>
+            <div>
+            <Searchbar onSubmit={this.onSubmit} />
+            </div>
         )
     }
 }

@@ -1,12 +1,14 @@
+import Button from "./Button.styled";
+import Form from "./Form.styled";
 import SearchbarStyled from "./Searchbar.styled";
 
 const Searchbar = ({ onSubmit }) => {
     return (
         <SearchbarStyled>
-            <form onSubmit={onSubmit}>
-                <button type="submit" >
+            <Form onSubmit={onSubmit}>
+                <Button type="submit" >
                     <span>Search</span>
-                </button>
+                </Button>
 
         <input
        name="search"             
@@ -15,7 +17,7 @@ const Searchbar = ({ onSubmit }) => {
       autoFocus
       placeholder="Search images and photos"
     />
-  </form>
+  </Form>
 </SearchbarStyled>
     )
 }
