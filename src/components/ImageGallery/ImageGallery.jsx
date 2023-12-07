@@ -1,13 +1,8 @@
 import Gallery from "./Gallery.styled";
 
-const ImageGallery = ({array, children}) => {
+const ImageGallery = ({children}) => {
     return (
-        <Gallery>
-            {array.map(({ id, tags, webformatURL }) => (
-               <li key={id} > <img src={webformatURL} alt={tags} />
-        </li>
-           ))}
-            {children}</Gallery>
+        <Gallery>{children}</Gallery>
     )
     
 }

@@ -1,8 +1,13 @@
-const ImageGalleryItem = () => {
+import Item from "./Item.styled";
+
+const ImageGalleryItem = ({array}) => {
     return (
-        <li class="gallery-item">
-        <img src="" alt="" />
-        </li>
+    <>
+        {array.map(({ id, tags, webformatURL }) => (
+               <Item key={id} > <img src={webformatURL} alt={tags} />
+        </Item>
+        ))}
+    </>
     )
 }
 export default ImageGalleryItem;
