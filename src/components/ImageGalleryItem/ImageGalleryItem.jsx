@@ -4,7 +4,7 @@ const ImageGalleryItem = ({array}) => {
     return (
     <>
         {array.map(({ id, tags, webformatURL }) => (
-               <Item key={id} > <img src={webformatURL} alt={tags} />
+               <Item key={id}> <img src={webformatURL} alt={tags} id={id} loading="lazy"/>
         </Item>
         ))}
     </>

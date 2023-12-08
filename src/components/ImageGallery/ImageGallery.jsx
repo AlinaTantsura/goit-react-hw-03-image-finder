@@ -1,8 +1,8 @@
 import Gallery from "./Gallery.styled";
 
-const ImageGallery = ({children}) => {
+const ImageGallery = ({onClick, children}) => {
     return (
-        <Gallery>{children}</Gallery>
+        <Gallery onClick={onClick}>{children}</Gallery>
     )
     
 }

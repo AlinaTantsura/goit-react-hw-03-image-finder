@@ -22,8 +22,36 @@ const Form = styled.form(() => {
        'input::placeholder':{
             font: 'inherit',
             fontSize: '18px',
-        }
+        },
+        button: {
+            position: 'relative',
+            display: 'inline-block',
+            width: '48px',
+            height: '48px',
+            border: 0,
+            opacity: '0.6',
+            transition: 'opacity 250ms cubic-bezier(0.4, 0, 0.2, 1)',
+            cursor: 'pointer',
+            outline: 'none',
+            span: {
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: 'inherit',
+                height: 'inherit',
+                padding: '8px',
+                overflow: 'hidden',
+                border: 0,
+                svg: {
+                    fill: '#3f51b5',
+                }
+            }
+        },
+        'button: hover': {
+            opacity: '1',
+        },
     }
 });
+
 export default Form;
 
