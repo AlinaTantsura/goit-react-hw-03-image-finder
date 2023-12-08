@@ -1,4 +1,5 @@
 import Item from "./Item.styled";
+// import { nanoid } from 'nanoid';
 
 const ImageGalleryItem = ({array}) => {
     return (

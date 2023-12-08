@@ -7,6 +7,7 @@ import Button from "./Button/Button";
 import Container from "./Container.styled";
 import Loader from "./Loader/Loader";
 import Modal from "./Modal/Modal";
+import { Notify } from "notiflix";
 
 class App extends Component{
     state={
@@ -15,24 +16,17 @@ class App extends Component{
         isLoad: false,
         page: 1,
         totalHits: 0,
-        pictureId: null,
+        pictureInfo: null,
         isOpenModal: false,
     }
-     onSubmit = (e) => {
-         e.preventDefault();
-         this.setState({ searchValue: e.target.elements.search.value });
-    }
-    handleClick = () => {
-        let page = this.state.page;
-        this.setState({ page: page += 1 });
-    }
- 
+
     componentDidUpdate(_, prevState) {
         if (prevState.searchValue !== this.state.searchValue ) {
             this.setState({
                 isLoad: true,
                 page: 1,
                 imagesArray: [],
+                totalHits: 0,
             });
             this.handleFetchPictures();
             
@@ -42,36 +36,52 @@ class App extends Component{
             this.handleFetchPictures();
         }
     } 
+
     handleFetchPictures = async() => {
         try {
             const resp = await fetchPictures(this.state.searchValue, this.state.page);
-            // this.setState((prev)=>({imagesArray: [...prev.imagesArray, ...resp.data.hits]}))
-            this.setState((prev)=>({imagesArray: [...prev.imagesArray, ...resp.data.hits.filter((item)=> (!this.state.imagesArray.find(({id})=> id === item.id)))]}))
+            this.setState((prev)=>({imagesArray: [...prev.imagesArray, ...resp.data.hits]}))
+            // this.setState((prev)=>({imagesArray: [...prev.imagesArray, ...resp.data.hits.filter((item)=> (!this.state.imagesArray.find(({id})=> id === item.id)))]}))
             if (this.state.page === 1) {
-                  this.setState({totalHits: resp.data.totalHits})
+                if (resp.data.totalHits === 0) {
+                    Notify.warning("There are no images to your request. Change search word!")
+                }
+                else {
+                    Notify.success(`Hooray! We found ${resp.data.totalHits} images`)
+                }
+                this.setState({totalHits: resp.data.totalHits})
               }  
             }
         catch (error) {
-            console.log(error.message);
+            Notify.failure(`${error.message}`)
         }
         finally{
             this.setState({
                 isLoad: false,
             })
         }
+        
     }
+
+    onSubmit = (e) => {
+         e.preventDefault();
+         this.setState({ searchValue: e.target.elements.search.value });
+    }
+    handleClick = () => {
+        let page = this.state.page;
+        this.setState({ page: page += 1 });
+    }
+    
     handleOpenModal = ({currentTarget, target}) => {
         if(currentTarget === target) return
         const picId = this.state.imagesArray.find((item) => (item.id === Number(target.id)));
-        console.log(picId);
         this.setState({
-            pictureId: picId ,
-            isOpenModal: true
+            pictureInfo: picId ,
+            isOpenModal: true,
         });
     }
 
     closeModal = (e) => {
-        console.log(e)
         const { currentTarget, target } = e;
         if (currentTarget === target || e.key === "Escape") this.setState({ isOpenModal: false });
         return;
@@ -79,7 +89,7 @@ class App extends Component{
 
     
     render() {
-      const  { isLoad, imagesArray, totalHits, isOpenModal, pictureId } = this.state;
+      const  { isLoad, imagesArray, totalHits, isOpenModal, pictureInfo } = this.state;
      
         return (
             <Container>
@@ -88,11 +98,12 @@ class App extends Component{
                     <ImageGallery onClick={this.handleOpenModal}>
                         <ImageGalleryItem array={imagesArray} />
                     </ImageGallery>
-                    {(imagesArray.length < totalHits) && (
-                    <Button onClick={this.handleClick} />
-                )}
+                    {(imagesArray.length < totalHits && totalHits !== 0) && (
+                        <Button onClick={this.handleClick} />
+                    )}
+                    {(imagesArray.length >= totalHits && totalHits !== 0) && Notify.info("There are all found images))))")}
                 </>)}
-                {isOpenModal && (<Modal pictureInfo={pictureId} closeModal={this.closeModal} />)}
+                {isOpenModal && (<Modal pictureInfo={pictureInfo} closeModal={this.closeModal} />)}
             </Container>
         )
     }
