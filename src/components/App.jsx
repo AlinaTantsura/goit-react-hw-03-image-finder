@@ -57,6 +57,7 @@ class App extends Component{
                     return;
                 }
                 else if (resp.data.totalHits <= resp.data.hits.length) {
+                    Notify.success(`Hooray! We found ${resp.data.totalHits} images`);
                     Notify.info("There are all found images");
                     return;    
                 }
