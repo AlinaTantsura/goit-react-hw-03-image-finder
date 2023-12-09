@@ -19,7 +19,6 @@ class App extends Component{
         totalHits: 0,
         pictureInfo: null,
         isOpenModal: false,
-        isLoadMore: false,
     }
 
     componentDidUpdate(_, prevState) {
@@ -70,10 +69,6 @@ class App extends Component{
                     return;
                 }
             }  
-            if (resp.data.hits.length === 0) {
-                this.setState({ isLoadMore: false });
-                return;
-            }
             }
         catch (error) {
             Notify.failure(`${error.message}`)
@@ -113,7 +108,7 @@ class App extends Component{
 
     
     render() {
-      const  { isLoad, imagesArray, totalHits, isOpenModal, pictureInfo, isLoadMore } = this.state;
+      const  { isLoad, imagesArray, totalHits, isOpenModal, pictureInfo } = this.state;
         return (
             <Container>
                 <Searchbar onSubmit={this.onSubmit} />
@@ -121,7 +116,7 @@ class App extends Component{
                     <ImageGallery onClick={this.handleOpenModal}>
                         <ImageGalleryItem array={imagesArray} />
                     </ImageGallery>
-                    {(imagesArray.length < totalHits && totalHits !== 0 && isLoadMore) && (
+                    {(imagesArray.length < totalHits && totalHits !== 0) && (
                         <Button onClick={this.handleClick} />
                     )}
                     {(imagesArray.length >= totalHits && totalHits !== 0) && Notify.info("There are all found images))))")}
