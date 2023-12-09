@@ -86,7 +86,8 @@ class App extends Component{
     }
 
     onSubmit = (e) => {
-         e.preventDefault();
+        e.preventDefault();
+        if (this.state.searchValue === e.target.elements.search.value) return;
          this.setState({ searchValue: e.target.elements.search.value, imagesArray: [] });
     }
     handleClick = () => {
