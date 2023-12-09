@@ -14,7 +14,7 @@ const ModalStyled = styled.div(() => {
         zIndex: 1200,
         div: {
             maxWidth: 'calc(100vw - 48px)',
-            maxHeight: 'calc(100vh - 24px)',
+            maxHeight: 'calc(100vh - 48px)',
            
         }
     }

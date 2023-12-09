@@ -1,7 +1,6 @@
 import Item from "./Item.styled";
-// import { nanoid } from 'nanoid';
 
-const ImageGalleryItem = ({array}) => {
+const ImageGalleryItem = ({ array }) => {
     return (
     <>
         {array.map(({ id, tags, webformatURL }) => (

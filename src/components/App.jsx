@@ -8,6 +8,7 @@ import Container from "./Container.styled";
 import Loader from "./Loader/Loader";
 import Modal from "./Modal/Modal";
 import { Notify } from "notiflix";
+import { nanoid } from "nanoid";
 
 class App extends Component{
     state={
@@ -18,6 +19,7 @@ class App extends Component{
         totalHits: 0,
         pictureInfo: null,
         isOpenModal: false,
+        isLoadMore: false,
     }
 
     componentDidUpdate(_, prevState) {
@@ -25,8 +27,8 @@ class App extends Component{
             this.setState({
                 isLoad: true,
                 page: 1,
-                imagesArray: [],
                 totalHits: 0,
+                imagesArray:[],
             });
             this.handleFetchPictures();
             
@@ -40,17 +42,37 @@ class App extends Component{
     handleFetchPictures = async() => {
         try {
             const resp = await fetchPictures(this.state.searchValue, this.state.page);
-            this.setState((prev)=>({imagesArray: [...prev.imagesArray, ...resp.data.hits]}))
-            // this.setState((prev)=>({imagesArray: [...prev.imagesArray, ...resp.data.hits.filter((item)=> (!this.state.imagesArray.find(({id})=> id === item.id)))]}))
+            // this.setState((prev)=>({imagesArray: [...prev.imagesArray, ...resp.data.hits]}))
+            // this.setState((prev) => ({ imagesArray: [...prev.imagesArray, ...resp.data.hits.filter((item) => (!this.state.imagesArray.find(({ id }) => id === item.id)))] }))
+            this.setState((prev) => ({
+                imagesArray: [...prev.imagesArray, ...resp.data.hits.map((item) => {
+                        item.id = nanoid();
+                        return item; 
+                })]
+            }))
+           
             if (this.state.page === 1) {
-                if (resp.data.totalHits === 0) {
+                if (resp.data.totalHits === 0 || resp.data.hits.length === 0) {
                     Notify.warning("There are no images to your request. Change search word!")
+                    return;
+                }
+                else if (resp.data.totalHits <= resp.data.hits.length) {
+                    Notify.info("There are all found images");
+                    return;    
                 }
                 else {
+                    this.setState({
+                        totalHits: resp.data.totalHits,
+                        isLoadMore: true,
+                    })
                     Notify.success(`Hooray! We found ${resp.data.totalHits} images`)
+                    return;
                 }
-                this.setState({totalHits: resp.data.totalHits})
-              }  
+            }  
+            if (resp.data.hits.length === 0) {
+                this.setState({ isLoadMore: false });
+                return;
+            }
             }
         catch (error) {
             Notify.failure(`${error.message}`)
@@ -65,7 +87,7 @@ class App extends Component{
 
     onSubmit = (e) => {
          e.preventDefault();
-         this.setState({ searchValue: e.target.elements.search.value });
+         this.setState({ searchValue: e.target.elements.search.value, imagesArray: [] });
     }
     handleClick = () => {
         let page = this.state.page;
@@ -73,8 +95,8 @@ class App extends Component{
     }
     
     handleOpenModal = ({currentTarget, target}) => {
-        if(currentTarget === target) return
-        const picId = this.state.imagesArray.find((item) => (item.id === Number(target.id)));
+        if (currentTarget === target) return;
+        const picId = this.state.imagesArray.find((item) => (item.id === target.id));
         this.setState({
             pictureInfo: picId ,
             isOpenModal: true,
@@ -89,8 +111,7 @@ class App extends Component{
 
     
     render() {
-      const  { isLoad, imagesArray, totalHits, isOpenModal, pictureInfo } = this.state;
-     
+      const  { isLoad, imagesArray, totalHits, isOpenModal, pictureInfo, isLoadMore } = this.state;
         return (
             <Container>
                 <Searchbar onSubmit={this.onSubmit} />
@@ -98,7 +119,7 @@ class App extends Component{
                     <ImageGallery onClick={this.handleOpenModal}>
                         <ImageGalleryItem array={imagesArray} />
                     </ImageGallery>
-                    {(imagesArray.length < totalHits && totalHits !== 0) && (
+                    {(imagesArray.length < totalHits && totalHits !== 0 && isLoadMore) && (
                         <Button onClick={this.handleClick} />
                     )}
                     {(imagesArray.length >= totalHits && totalHits !== 0) && Notify.info("There are all found images))))")}
